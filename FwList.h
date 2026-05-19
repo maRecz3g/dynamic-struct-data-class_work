@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
-using std::cout;
-using std::endl;
+using namespace std;
 
 template <typename T>
 struct Node
@@ -40,6 +39,18 @@ public:
     void print() const;
 
     bool isEmpty() const;
+
+    // Клонування списку
+    FwList clone() const;
+
+    // Оператор +
+    FwList operator+(const FwList& other) const;
+
+    // Оператор *
+    FwList operator*(const FwList& other) const;
+
+    // Перевірка наявності елемента
+    bool contains(const T& value) const;
 
 private:
     Node<T>* head = nullptr;
@@ -202,4 +213,103 @@ template<typename T>
 bool FwList<T>::isEmpty() const
 {
     return head == nullptr;
+}
+
+// =======================
+// contains
+// =======================
+
+template<typename T>
+bool FwList<T>::contains(const T& value) const
+{
+    auto tmp = head;
+
+    while (tmp != nullptr)
+    {
+        if (tmp->data == value)
+            return true;
+
+        tmp = tmp->next;
+    }
+
+    return false;
+}
+
+// =======================
+// clone
+// =======================
+
+template<typename T>
+FwList<T> FwList<T>::clone() const
+{
+    FwList<T> newList;
+
+    auto tmp = head;
+
+    while (tmp != nullptr)
+    {
+        newList.addTail(tmp->data);
+        tmp = tmp->next;
+    }
+
+    return newList;
+}
+
+// =======================
+// operator +
+// =======================
+
+template<typename T>
+FwList<T> FwList<T>::operator+(const FwList& other) const
+{
+    FwList<T> result;
+
+    auto tmp = head;
+
+    // Додаємо елементи першого списку
+    while (tmp != nullptr)
+    {
+        if (!result.contains(tmp->data))
+            result.addTail(tmp->data);
+
+        tmp = tmp->next;
+    }
+
+    // Додаємо елементи другого списку
+    tmp = other.head;
+
+    while (tmp != nullptr)
+    {
+        if (!result.contains(tmp->data))
+            result.addTail(tmp->data);
+
+        tmp = tmp->next;
+    }
+
+    return result;
+}
+
+// =======================
+// operator *
+// =======================
+
+template<typename T>
+FwList<T> FwList<T>::operator*(const FwList& other) const
+{
+    FwList<T> result;
+
+    auto tmp = head;
+
+    while (tmp != nullptr)
+    {
+        if (other.contains(tmp->data) &&
+            !result.contains(tmp->data))
+        {
+            result.addTail(tmp->data);
+        }
+
+        tmp = tmp->next;
+    }
+
+    return result;
 }
